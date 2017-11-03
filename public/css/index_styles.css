@@ -1,0 +1,30 @@
+form
+{
+    margin: auto auto;
+}
+body
+{
+    background: gainsboro;
+}
+#button
+{
+    margin-top: 20px;
+}
+.container
+{
+    height: 300px;
+    border: 1px solid cornflowerblue;
+    background: cornflowerblue;
+    width: 40%;
+    border-radius: 15px;
+    margin-top: 10%;
+    text-align: center;
+    min-width: 400px;
+}
+.header
+{
+    font-size: 2em;
+}
+
+
+
