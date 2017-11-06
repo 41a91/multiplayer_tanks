@@ -13,14 +13,19 @@
     <div class="input-group">
         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
         <input type="password" id="password" name="password" class="form-control" placeholder="Password"/>
+
     </div>
+
     <button type="submit" id="button" class="btn btn-default">Log In</button>
+    <a href="/register">Register</a>
 
     <% if(typeof error != "undefined"){%>
     <p class="text-danger"><%= error %></p>
     <%}%>
 
 </form>
+
+
     </div>
     <div class="col-xs-3 sides">
 
