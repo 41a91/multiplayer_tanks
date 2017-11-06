@@ -117,6 +117,7 @@ function createRoutes(app,publicPath,mysession)
                             {
                                 mysession = req.session;
                                 mysession.authorized = true;
+                                mysession.profile = {username:profile.profile_username, kills:profile.profile_kills};
                                 res.redirect("/private/lobby");
                             }
                             else {

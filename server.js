@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 app.use(session({secret: "dennisiscool",resave:true,saveUninitialized:true}));
 app.use(function(req, res, next){
     res.locals.authorized  = req.session.authorized;
+    res.locals.profile = req.session.profile;
     next();
 });
 
