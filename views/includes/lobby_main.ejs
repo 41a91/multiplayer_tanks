@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" data-ng-app="chatApp" data-ng-controller="chatController">
 
     <h1 class="h1">Tanks!</h1>
 
@@ -15,7 +15,11 @@
             </div>
         </div>
         <div class="col-xs-6 row1col2">
-            <textarea rows="20" readonly="readonly" id="chatText"></textarea>
+            <ul class="chatText">
+                <li class="message" data-ng-repeat="message in messages">
+                    <div class="messageSender">{{message.user}}: {{message.message}}</div>
+                </li>
+            </ul>
         </div>
         <div class="col-xs-3 row1col3">
             <div id="games">
@@ -48,8 +52,8 @@
         </div>
             <div class="row">
                 <div class="col-xs-12 stats">
-                    <h2 class="h2">Username: <strong>Test User1</strong></h2>
-                    <h2 class="h2">Kills: <strong>5000000</strong></h2>
+                    <h2 class="h2">Username: <strong id="username"><%= profile.username%></strong></h2>
+                    <h2 class="h2">Kills: <strong id="kills"><%=profile.kills%></strong></h2>
                     <a href="/private/logout" class="btn btn-info" role="button">Logout</a>
                 </div>
             </div>
