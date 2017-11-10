@@ -5,8 +5,17 @@ var path = require("path");
 var http = require("http");
 var socket = require("socket.io");
 
+var {createRoutes} = require("./routes.js");
+var {handleSocketEvents} = require("./sockethandler");
+var {Users} = require("./utils/users.js");
+var {InGameUsers} = require("./utils/ingameusers.js");
+var {GameServers} = require("./utils/gameservers.js");
+
 var mysession;
-var users = [];
+var users = new Users();
+var inGameUsers = new InGameUsers();
+var gameServers = new GameServers();
+
 
 var port = process.env.PORT || 8080;
 
@@ -32,11 +41,10 @@ app.use(function(req, res, next){
 
 
 
-var {createRoutes} = require("./routes.js");
-var {handleSocketEvents} = require("./sockethandler");
+
 
 createRoutes(app,publicPath,mysession);
-handleSocketEvents(io,users);
+handleSocketEvents(io,users,app,gameServers,inGameUsers);
 
 server.listen(port);
 

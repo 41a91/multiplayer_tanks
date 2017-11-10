@@ -50,8 +50,10 @@ function createRoutes(app,publicPath,mysession)
     {
        res.render("register");
     });
-
-
+    app.get("/private/game",function(req,res)
+    {
+       res.render("game");
+    });
 
 
     ////////////////////Start Posts//////////////////////////

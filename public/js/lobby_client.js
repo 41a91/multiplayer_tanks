@@ -27,15 +27,13 @@ app.factory('socket', function ($rootScope) {
 function updateScroll()
 {
     var chatBox = $(".messageSender");
-    chatBox.scrollTop = chatBox.scrollHeight;
+        chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 app.controller("chatController",function($scope,socket)
 {
     $scope.users = [];
     $scope.messages = [];
-
-    console.log("scope: " + $scope.kills);
 
     socket.on("connect",function()
     {
@@ -53,7 +51,27 @@ app.controller("chatController",function($scope,socket)
         });
     });
 
+    socket.on("updateUserList",function(users)
+    {
+        $scope.users = users;
+        console.log("new user: ", users);
+    });
+    socket.on("newMessage",function(message)
+    {
+        $scope.messages.push(message);
+        updateScroll();
 
-
-
+    });
+    $("#send").click(function()
+    {
+        socket.emit("createMessage",{text:$("#message").val()},function(data)
+        {
+            $("#message").val("");
+        });
+    });
+    $(".games").click(function(evt)
+    {
+       socket.emit("connectToGame",{gameId: $(this).attr("id")});
+       window.location.href="/private/game";
+    });
 });
