@@ -15,6 +15,30 @@ function createRoutes(app,publicPath,mysession)
 
 
 
+
+var checkLoggedIn = function(req,res,next)
+{
+  if(!req.path.startsWith("/private"))
+  {
+      next();
+  }
+  else
+  {
+      if(req.session && req.session.authorized === true)
+      {
+          next();
+      }
+      else
+      {
+          res.redirect("/");
+      }
+  }
+};
+
+app.all("*",checkLoggedIn);
+
+
+
     //////////////////////////////Start Gets//////////////////////////////////
     app.get("/",function(req,res)
     {

@@ -6,9 +6,9 @@ class GameServer
         this.bullets = [];
         this.id = id;
     }
-    addTank(id,username,kills)
+    addTank(id,username,kills,x,y,hp)
     {
-        var tank = {id,username,kills,x:0,y:0,hp:100};
+        var tank = {id,username,kills,x,y,hp};
         this.currentTanks.push(tank);
     }
     removeTank(tankId)
