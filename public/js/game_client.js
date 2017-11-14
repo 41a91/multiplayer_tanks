@@ -26,26 +26,33 @@ app.factory('socket', function ($rootScope) {
 
 app.controller("gameController",function($scope,socket)
 {
+
     socket.on("connect",function()
     {
         socket.emit("preparedGame",{username:$("#username").html()});
     });
-    socket.on("updateTanks",(tanks)=>
+    socket.on("updateTanks",(tank)=>
     {
-       console.log("We got the tanks ",tanks);
+        console.log("We got the tank ",tank);
+        $scope.game.addTank(tank.userId,tank.username,tank.isLocal,tank.x,tank.y,tank.hp);
     });
 
-
-
-
-
-
-
-
-
-    $("#leaveGame").click(function(evt)
+    $(document).ready(function()
     {
-        socket.emit("leaveGame");
-    });
+        $scope.game = new Game(document.getElementById("game"));
 
+
+
+
+
+       $scope.game.gameLoop();
+
+
+
+
+        $("#leaveGame").click(function(evt)
+        {
+            socket.emit("leaveGame");
+        });
+    });
 });

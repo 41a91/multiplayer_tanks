@@ -9,7 +9,6 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
 
         socket.on("join",(params,callback)=>
         {
-
             console.log("user: ",params);
            if(!isRealString(params.username) || !isRealString(params.kills))
            {
@@ -21,7 +20,7 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
            users.removeUser(socket.id);
            users.addUser(socket.id,params.username,params.kills);
            io.to("chat").emit("updateUserList",users.getUserList());
-            socket.emit("newMessage",generateMessage(params.username,"Welcome to the chat room:"));
+            socket.emit("newMessage",generateMessage("Admin","Welcome to the chat room: " + params.username));
             socket.broadcast.to("chat").emit("newMessage",generateMessage("Admin",params.username + " has joined the chat room!"));
             callback();
         });

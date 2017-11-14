@@ -26,7 +26,7 @@ class Tank
             down: false
         };
         this.hp = hp;
-        this.img = null;
+        this.img = document.getElementById("startTank");
 
         if(this.percW < 1)
         {
