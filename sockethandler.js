@@ -70,22 +70,22 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
             if(user)
             {
             user.id = socket.id;
-            var initX = randomNumber(20,280);
-            var initY = randomNumber(20,480);
+            var initX = randomNumber(5,80);
+            var initY = randomNumber(5,100);
 
             socket.join(user.gameId);
             if(gameServers.checkServerExists(user.gameId))
             {
-                gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100);
+                    gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100,"right");
             }
             else
             {
                 gameServers.startServer(user.gameId);
-                gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100);
+                gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100,"right");
             }
 
-               socket.emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:true});
-               socket.to(user.gameId).emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:false});
+               socket.emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:true,gameId: user.gameId});
+               socket.broadcast.to(user.gameId).emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:false, gameId: user.gameId});
            }
         });
         socket.on("leaveGame",()=>
@@ -96,15 +96,19 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
             if(user)
             {
                 gameServers.accessServer(user.gameId).removeTank(socket.id);
-                io.to(user.gameId).emit("updateTanks",gameServers.accessServer(user.gameId).getTanks());
+                io.to(user.gameId).emit("removeTank",{userId: user.id});
             }
         });
+        socket.on("sync",(tank)=>
+        {
+            //TODO when i leave the game it still think the tank is in the array when its not
+           gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
+           gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
+           gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
 
+           io.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
 
-
-
-
-
+        });
 
 
     });

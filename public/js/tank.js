@@ -1,8 +1,9 @@
 class Tank
 {
-    constructor(userId,username,isLocal,x,y,w,h,hp,container)
+    constructor(userId,gameId,username,isLocal,x,y,w,h,hp,container)
     {
         this.userId = userId;
+        this.gameId = gameId;
         this.username = username;
         this.isLocal = isLocal;
         this.container = container;
@@ -19,6 +20,10 @@ class Tank
         this.isVisible = true;
         this.dead = false;
         this.isFacing = "right";
+        this.rightImg = document.getElementById("rightTank");
+        this.leftImg = document.getElementById("leftTank");
+        this.upImg = document.getElementById("upTank");
+        this.downImg = document.getElementById("downTank");
         this.dir = {
             left: false,
             right: false,
@@ -26,7 +31,7 @@ class Tank
             down: false
         };
         this.hp = hp;
-        this.img = document.getElementById("startTank");
+        this.img = this.rightImg;
 
         if(this.percW < 1)
         {
@@ -40,6 +45,10 @@ class Tank
         {
             this.setControls();
         }
+    }
+    getDirection()
+    {
+        return this.isFacing;
     }
     getX()
     {
@@ -73,6 +82,14 @@ class Tank
     {
         return this.percH;
     }
+    getGameId()
+    {
+        return this.gameId;
+    }
+    setDirection(dir)
+    {
+        this.isFacing = dir;
+    }
     setX(x)
     {
         this.x = x;
@@ -92,6 +109,14 @@ class Tank
     {
         this.height = h;
         this.percH =  this.percH = Math.round(h/100*this.container.height);
+    }
+    setHp(hp)
+    {
+        this.hp = hp;
+    }
+    destroy(bool)
+    {
+        this.dead = bool;
     }
     getCenterX()
     {
@@ -116,6 +141,10 @@ class Tank
     getPercCenter()
     {
         return {percX:this.getPercX(), percY:this.getCenterPercY()};
+    }
+    getHp()
+    {
+        return this.hp;
     }
     getUserId()
     {
@@ -215,30 +244,29 @@ class Tank
     }
     setControls()
     {
+        var tank = this;
         $(document).keypress(function(e)
         {
            switch(e.keyCode)
            {
                case 119:
-                   this.dir.up = true;
-                   this.moveY(5);
+                   tank.dir.up = true;
                    this.isFacing = "up";
-                   //set image changes here  this.setImg(whatever image is up)
                    break;
                case 100:
-                   this.dir.right = true;
-                   this.moveX(5);
+                   tank.dir.right = true;
                    this.isFacing = "right";
                    break;
                case 115:
-                   this.dir.down = true;
-                   this.moveY(-5);
+                   tank.dir.down = true;
                    this.isFacing = "down";
                    break;
                case 97:
-                   this.dir.left = true;
-                   this.moveX(-5);
+                   tank.dir.left = true;
                    this.isFacing = "left";
+                   break;
+               case 32:
+                   tank.shoot();
                    break;
            }
         }).keyup(function(e)
@@ -246,24 +274,74 @@ class Tank
            switch(e.keyCode)
            {
                case 87:
-                   this.dir.up = false;
+                   tank.dir.up = false;
                    break;
                case 68:
-                   this.dir.right = false;
+                   tank.dir.right = false;
                    break;
                case 83:
-                   this.dir.down = false;
+                   tank.dir.down = false;
                    break;
                case 65:
-                   this.dir.left = false;
+                   tank.dir.left = false;
                    break;
            }
-        }).click(function(){
-            this.shoot();
         });
     }
     shoot()
     {
-        //shoot a bullet!!!!!
+        console.log("POW!");
+    }
+    move()
+    {
+        if(this.dead)
+        {
+            return;
+        }
+
+        var moveX = 0;
+        var moveY = 0;
+
+        if(this.dir.up)
+        {
+            moveY = -2;
+            this.setImg(this.upImg);
+        }
+        else if(this.dir.down)
+        {
+            moveY = 2;
+            this.setImg(this.downImg);
+        }
+        if(this.dir.right)
+        {
+            moveX = 2;
+            this.setImg(this.rightImg);
+        }
+        else if(this.dir.left)
+        {
+            moveX = -2;
+            this.setImg(this.leftImg);
+        }
+
+        if(this.dir.left && !this.dir.up && !this.dir.down && !this.dir.right && this.percX > 0)
+        {
+            this.moveX(moveX);
+        }
+        if(this.dir.right && !this.dir.up && !this.dir.down && !this.dir.left && this.percX < this.container.width-this.percW)
+        {
+            this.moveX(moveX);
+        }
+        if(this.percY > 0 && !this.dir.down && this.dir.up && !this.dir.left && !this.dir.right)
+        {
+            this.moveY(moveY);
+        }
+        if(this.percY < this.container.height-this.percH && !this.dir.up && this.dir.down && !this.dir.right && !this.dir.left)
+        {
+            this.moveY(moveY);
+        }
+    }
+    reposition()
+    {
+
     }
 }

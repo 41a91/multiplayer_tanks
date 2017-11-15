@@ -34,18 +34,27 @@ app.controller("gameController",function($scope,socket)
     socket.on("updateTanks",(tank)=>
     {
         console.log("We got the tank ",tank);
-        $scope.game.addTank(tank.userId,tank.username,tank.isLocal,tank.x,tank.y,tank.hp);
+        $scope.game.addTank(tank.userId,tank.gameId,tank.username,tank.isLocal,tank.x,tank.y,tank.hp);
+    });
+    socket.on("removeTank",(tank)=>
+    {
+       $scope.game.removeTank(tank.userId);
+    });
+    socket.on("sync",(tanks)=>
+    {
+       $scope.game.updateServerTanks(tanks);
     });
 
     $(document).ready(function()
     {
-        $scope.game = new Game(document.getElementById("game"));
+        $scope.game = new Game(document.getElementById("game"),socket);
 
-
-
-
-
-       $scope.game.gameLoop();
+        if(performance.navigation.type === 1)
+        {
+            socket.emit("leaveGame");
+            console.log("refreshed page");
+            //window.location.href = "/private/lobby";
+        }
 
 
 
