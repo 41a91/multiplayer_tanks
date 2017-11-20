@@ -342,6 +342,21 @@ class Tank
     }
     reposition()
     {
-
+        if(this.isFacing === "right")
+        {
+            this.setImg(this.rightImg);
+        }
+        if(this.isFacing === "left")
+        {
+            this.setImg(this.leftImg);
+        }
+        if(this.isFacing === "up")
+        {
+            this.setImg(this.upImg);
+        }
+        if(this.isFacing === "down")
+        {
+            this.setImg(this.downImg);
+        }
     }
 }

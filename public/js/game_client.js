@@ -49,12 +49,12 @@ app.controller("gameController",function($scope,socket)
     {
         $scope.game = new Game(document.getElementById("game"),socket);
 
-        if(performance.navigation.type === 1)
+       /* if(performance.navigation.type === 1)
         {
             socket.emit("leaveGame");
             console.log("refreshed page");
             //window.location.href = "/private/lobby";
-        }
+        }*/
 
 
 

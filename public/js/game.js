@@ -87,12 +87,14 @@ class Game
     {
         var game = this;
         //TODO not sending my tank data from the server only the local tank
+        console.log("every tank in the current game: ",info.tanks);
 
         info.tanks.forEach(function(tank)
         {
-            console.log("tank: " ,tank);
-           if(game.localTank.getUserId() === tank.id)
+            console.log("Local to this client: ",game.localTank);
+           if(game.localTank.getUserId() == tank.id)
            {
+               console.log("why am i in the loop? " ,tank);
                game.localTank.setHp(tank.hp);
                if(game.localTank.getHp() <= 0)
                {
@@ -102,14 +104,17 @@ class Game
            else
            {
                var exists = false;
+               console.log("good im in the other loop: ",tank);
+               console.log("game-tanks: " ,game.tanks);
 
                game.tanks.forEach(function(userTank)
                {
-                  if(userTank.getUserId() === tank.id)
+                  if(userTank.getUserId() == tank.id)
                   {
                       userTank.setX(tank.x);
                       userTank.setY(tank.y);
                       userTank.setHp(tank.hp);
+                      console.log("how am i even in here?? ",tank);
                       userTank.setDirection(tank.direction);
                       if(userTank.getHp <= 0)
                       {
@@ -118,16 +123,12 @@ class Game
                       userTank.reposition();
                       exists = true;
                   }
-                  console.log(exists);
-
-                  if(!exists && game.localTank.getUserId() !== tank.id)
-                  {
-                      console.log("found the tank: " + tank.id);
-                      game.addTank(tank.id,info.gameId,tank.username,false,tank.x,tank.y,tank.hp);
-                  }
                });
-
-
+               if(!exists && game.localTank.getUserId() != tank.id)
+               {
+                   console.log("found the tank: " + tank.id);
+                   game.addTank(tank.id,info.gameId,tank.username,false,tank.x,tank.y);
+               }
            }
 
         });
