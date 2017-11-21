@@ -342,6 +342,7 @@ class Tank
     }
     reposition()
     {
+        console.log("resposition: " + this.isFacing);
         if(this.isFacing === "right")
         {
             this.setImg(this.rightImg);

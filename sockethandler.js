@@ -105,6 +105,7 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
            gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
            gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
            gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
+           console.log("tanks direction: " + tank.direction);
 
            socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
            socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
