@@ -9,6 +9,8 @@ class Tank
         this.container = container;
         this.x = x;
         this.y = y;
+        this.prevX = x;
+        this.prevY = y;
         this.percX = Math.round(x/100*this.container.width);
         this.percY = Math.round(y/100*this.container.height);
         this.width = w;
@@ -20,6 +22,7 @@ class Tank
         this.isVisible = true;
         this.dead = false;
         this.isFacing = "right";
+        this.socket = null;
         this.rightImg = document.getElementById("rightTank");
         this.leftImg = document.getElementById("leftTank");
         this.upImg = document.getElementById("upTank");
@@ -85,6 +88,10 @@ class Tank
     getGameId()
     {
         return this.gameId;
+    }
+    setSocket(socket)
+    {
+        this.socket = socket;
     }
     setDirection(dir)
     {
@@ -153,6 +160,14 @@ class Tank
     getUsername()
     {
         return this.username;
+    }
+    getPrevX()
+    {
+        return this.prevX;
+    }
+    getPrevY()
+    {
+        return this.prevY;
     }
     setImg(img)
     {
@@ -251,19 +266,19 @@ class Tank
            {
                case 119:
                    tank.dir.up = true;
-                   this.isFacing = "up";
+                   tank.isFacing = "up";
                    break;
                case 100:
                    tank.dir.right = true;
-                   this.isFacing = "right";
+                   tank.isFacing = "right";
                    break;
                case 115:
                    tank.dir.down = true;
-                   this.isFacing = "down";
+                   tank.isFacing = "down";
                    break;
                case 97:
                    tank.dir.left = true;
-                   this.isFacing = "left";
+                   tank.isFacing = "left";
                    break;
                case 32:
                    tank.shoot();
@@ -291,6 +306,30 @@ class Tank
     shoot()
     {
         console.log("POW!");
+        var deltaX = this.getCenterX();
+        var deltaY = this.getCenterY();
+
+        if(this.isFacing === "up")
+        {
+            deltaY -= 5;
+        }
+        if(this.isFacing === "down")
+        {
+            deltaY += 5;
+        }
+        if(this.isFacing === "right")
+        {
+            deltaX += 5;
+        }
+        if(this.isFacing === "left")
+        {
+            deltaX -= 5;
+        }
+
+        var bullet = {userId:this.userId,gameId:this.gameId,x:deltaX,y:deltaY,isFacing:this.isFacing,container:this.container};
+            //new Bullet(this.userId,this.gameId,deltaX,deltaY,5,5,this.container);
+
+        this.socket.emit("fireBullet",bullet);
     }
     move()
     {
@@ -301,6 +340,8 @@ class Tank
 
         var moveX = 0;
         var moveY = 0;
+        this.prevX = this.x;
+        this.prevY = this.y;
 
         if(this.dir.up)
         {

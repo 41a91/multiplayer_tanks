@@ -1,6 +1,8 @@
 var {escapeHtml} = require("./sanitize.js");
 var {isRealString} = require("./utils/validation.js");
 var {generateMessage} = require("./utils/message.js");
+var {Bullet} = require("./utils/bullet.js");
+
 
 function handleSocketEvents(io,users,app,gameServers,inGameUsers)
 {
@@ -105,14 +107,22 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
            gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
            gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
            gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
-           console.log("tanks direction: " + tank.direction);
+
+           gameServers.accessServer(tank.gameId).syncBullets();
 
            socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
            socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
 
+           gameServers.accessServer(tank.gameId).removeBullets();
+           //gameServers.accessServer(tank.gameId).removeDeadTanks();
+
         });
-
-
+        socket.on("fireBullet",(bullet)=>
+        {
+            //TODO the container is an empty object and the bullets are not placed on the screen in a percentage based way
+            gameServers.accessServer(bullet.gameId).addBullet(bullet.userId,bullet.gameId,bullet.x,bullet.y,bullet.isFacing,bullet.container);
+            console.log("bullets: " ,gameServers.accessServer(bullet.gameId).getBullets());
+        });
     });
 
 
