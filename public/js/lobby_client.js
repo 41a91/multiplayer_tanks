@@ -32,6 +32,8 @@ function updateScroll()
 
 app.controller("chatController",function($scope,socket)
 {
+    //TODO add in a way for the kills to be updated see routes /private/amountofkills
+
     $scope.users = [];
     $scope.messages = [];
 

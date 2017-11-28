@@ -35,3 +35,8 @@ img
 {
     display: none;
 }
+#health
+{
+    font-size: 2em;
+    color: red;
+}

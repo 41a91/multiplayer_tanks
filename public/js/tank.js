@@ -23,6 +23,7 @@ class Tank
         this.dead = false;
         this.isFacing = "right";
         this.socket = null;
+        this.lastBulletHit = null;
         this.rightImg = document.getElementById("rightTank");
         this.leftImg = document.getElementById("leftTank");
         this.upImg = document.getElementById("upTank");
@@ -121,6 +122,10 @@ class Tank
     {
         this.hp = hp;
     }
+    setLastBulletHit(bullet)
+    {
+        this.lastBulletHit = bullet;
+    }
     destroy(bool)
     {
         this.dead = bool;
@@ -169,6 +174,10 @@ class Tank
     {
         return this.prevY;
     }
+    getLastBulletHit()
+    {
+        return this.lastBulletHit;
+    }
     setImg(img)
     {
         this.img = img;
@@ -185,6 +194,10 @@ class Tank
     setDead(bool)
     {
         this.dead = bool;
+    }
+    destroyed()
+    {
+        return this.dead;
     }
     moveX(dx)
     {
@@ -281,7 +294,10 @@ class Tank
                    tank.isFacing = "left";
                    break;
                case 32:
-                   tank.shoot();
+                   if(!tank.dead)
+                   {
+                       tank.shoot();
+                   }
                    break;
            }
         }).keyup(function(e)
@@ -306,24 +322,24 @@ class Tank
     shoot()
     {
         console.log("POW!");
-        var deltaX = this.x;
-        var deltaY = this.y;
+        var deltaX = this.x + 4;
+        var deltaY = this.y + 4;
 
         if(this.isFacing === "up")
         {
-            deltaY -= 3;
+            deltaY -= 5;
         }
         if(this.isFacing === "down")
         {
-            deltaY += 7;
+            deltaY += 5;
         }
         if(this.isFacing === "right")
         {
-            deltaX += 7;
+            deltaX += 5;
         }
         if(this.isFacing === "left")
         {
-            deltaX -= 3;
+            deltaX -= 5;
         }
         console.log("The container of the bullet: " + this.container.width);
 
@@ -384,7 +400,6 @@ class Tank
     }
     reposition()
     {
-        console.log("resposition: " + this.isFacing);
         if(this.isFacing === "right")
         {
             this.setImg(this.rightImg);

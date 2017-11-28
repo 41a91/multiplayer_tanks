@@ -79,7 +79,6 @@ app.all("*",checkLoggedIn);
        res.render("game");
     });
 
-
     ////////////////////Start Posts//////////////////////////
     app.post("/register",function(req,res)
     {
@@ -163,11 +162,57 @@ app.all("*",checkLoggedIn);
             }
         });
     });
+    app.post("/private/updatescore",function(req,res)
+    {
+       var newKills = req.body.kills;
+       var username = req.body.username;
 
+       connection.query("select * from profile where profile_username =? limit 1",[username],function(err,result)
+       {
+          if(err)
+          {
+              console.log("error getting score in order to update");
+          }
+          else
+          {
+              if(result[0])
+              {
+                  var profile = result[0];
+                  var totalKills = newKills+profile.profile_kills;
 
+                  connection.query("update profile set profile_kills=? where profile_username =?",[totalKills,username],function(err,result)
+                  {
+                     if(err)
+                     {
+                         console.log("Error updating score in database");
+                     }
+                  });
+              }
+          }
+       });
+    });
+    app.post("/private/amountofkills",function(req,res)
+    {
+       var username = req.body.username;
 
+       connection.query("select * from profile where profile_username =? limit 1",[username],function(err,result)
+       {
+           if(err)
+           {
+               console.log("error getting score to update angular");
+           }
+           else {
+               if (result[0]) {
+                   var profile = result[0];
 
+                   res.send(profile.profile_kills);
 
+               }
+           }
+
+       });
+
+    });
 }
 
 module.exports = {createRoutes: createRoutes};

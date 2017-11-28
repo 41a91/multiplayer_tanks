@@ -11,7 +11,6 @@ class Bullet
         this.width = width;
         this.height = height;
         this.container = container;
-        console.log("bullets container: " ,container);
         this.percX = Math.round(x/100*this.container.width);
         this.percY = Math.round(y/100*this.container.height);
         this.percW = Math.round(width/100*this.container.width);

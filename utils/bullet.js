@@ -25,6 +25,22 @@ class Bullet
     {
         return this.bulletId;
     }
+    getUserId()
+    {
+        return this.userId;
+    }
+    getX()
+    {
+        return this.x;
+    }
+    getY()
+    {
+        return this.y;
+    }
+    intersects(tank)
+    {
+        return this.x >= tank.x && this.x+6 <= tank.x+15 && this.y >= tank.y && this.y+3 <= tank.y+12;
+    }
     controlBullet()
     {
         if(this.direction === "up")

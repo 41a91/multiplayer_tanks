@@ -11,8 +11,8 @@ class Game
 
         this.tankWidth = 10;
         this.tankHeight = 10;
-        this.bulletWidth = 5;
-        this.bulletHeight = 5;
+        this.bulletWidth = 2;
+        this.bulletHeight = 2;
 
         var t = this;
         setInterval(function()
@@ -77,9 +77,12 @@ class Game
             {
                 this.bullets[i].percDraw(this.graphics);
             }
-            this.socket.emit("sync",this.sendLocalTank());
+            if(!this.localTank.destroyed())
+            {
+                this.socket.emit("sync",this.sendLocalTank());
+            }
         this.removeBullets();
-        //this.removeDeadTanks();
+        this.removeDeadTanks();
 
     }
     sendLocalTank()
@@ -102,6 +105,7 @@ class Game
            if(game.localTank.getUserId() == tank.id)
            {
                game.localTank.setHp(tank.hp);
+               game.localTank.setLastBulletHit(tank.lastBulletHit);
                if(game.localTank.getHp() <= 0)
                {
                    game.localTank.destroy(true);
@@ -119,6 +123,7 @@ class Game
                       userTank.setY(tank.y);
                       userTank.setHp(tank.hp);
                       userTank.setDirection(tank.direction);
+                      userTank.setLastBulletHit(tank.lastBulletHit);
                       if(userTank.getHp <= 0)
                       {
                           userTank.destroy(true);
@@ -138,7 +143,6 @@ class Game
         info.bullets.forEach(function(bullet)
         {
            var bulletExists = false;
-           console.log("the bullet in the client game: " + bullet.bulletId);
            game.bullets.forEach(function(clientBullet)
            {
               if(bullet.bulletId === clientBullet.getBulletId())
@@ -146,7 +150,6 @@ class Game
                   clientBullet.setX(bullet.x);
                   clientBullet.setY(bullet.y);
                   clientBullet.setRemove(bullet.remove);
-                  console.log("the bullets life span: " + bullet.remove);
                   bulletExists = true;
               }
            });
@@ -166,10 +169,23 @@ class Game
     }
     removeDeadTanks()
     {
+        var game = this;
+        var deadTanks = this.tanks.filter(function(tank)
+        {
+            return tank.hp <= 0;
+        });
+        deadTanks.forEach(function(tank)
+        {
+            game.socket.emit("updateScores",{killedBy:tank.getLastBulletHit(),gameId:tank.getGameId()});
+        });
         this.tanks = this.tanks.filter(function(tank)
         {
             return tank.hp > 0;
         });
+    }
+    getLocalTankHp()
+    {
+        return this.localTank.getHp();
     }
 
 

@@ -11,7 +11,6 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
 
         socket.on("join",(params,callback)=>
         {
-            console.log("user: ",params);
            if(!isRealString(params.username) || !isRealString(params.kills))
            {
                callback("incorrect username or password");
@@ -67,7 +66,6 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
         socket.on("preparedGame",(params)=>
         {
             var user = inGameUsers.getUserByName(params.username);
-            console.log("user: ",user);
 
             if(user)
             {
@@ -78,12 +76,12 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
             socket.join(user.gameId);
             if(gameServers.checkServerExists(user.gameId))
             {
-                    gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100,"right");
+                    gameServers.accessServer(user.gameId).addTank(user.id,user.username,0,initX,initY,100,"right");
             }
             else
             {
                 gameServers.startServer(user.gameId);
-                gameServers.accessServer(user.gameId).addTank(user.id,user.username,user.kills,initX,initY,100,"right");
+                gameServers.accessServer(user.gameId).addTank(user.id,user.username,0,initX,initY,100,"right");
             }
 
                socket.emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:true,gameId: user.gameId});
@@ -104,28 +102,35 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
         socket.on("sync",(tank)=>
         {
             //TODO when i leave the game it still think the tank is in the array when its not
-           gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
-           gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
-           gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
+            if(gameServers.accessServer(tank.gameId).getTank(tank.userId))
+            {
+                gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
+                gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
+                gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
 
-            socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
-            socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
+                socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
+                socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
 
-           gameServers.accessServer(tank.gameId).removeBullets();
-           gameServers.accessServer(tank.gameId).syncBullets();
-
-
-
-           //gameServers.accessServer(tank.gameId).removeDeadTanks();
+            }
+            setTimeout(function(){
+                gameServers.accessServer(tank.gameId).removeBullets();
+                gameServers.accessServer(tank.gameId).removeDeadTanks();
+                gameServers.accessServer(tank.gameId).syncBullets();},0)
 
         });
         socket.on("fireBullet",(bullet)=>
         {
-            //TODO the container is an empty object and the bullets are not placed on the screen in a percentage based way
             gameServers.accessServer(bullet.gameId).addBullet(bullet.userId,bullet.gameId,bullet.x,bullet.y,bullet.isFacing,bullet.containerHeight,bullet.containerWidth);
-            console.log("bullets: " ,gameServers.accessServer(bullet.gameId).getBullets());
+        });
+        socket.on("updateScores",(userInfo)=>
+        {
+            var username = gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).username;
+            gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills += 1;
+            console.log( gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills);
+            socket.emit("updateScores",{kills:gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills,username:username});
         });
     });
+
 
 
     var randomNumber = function(min,max)

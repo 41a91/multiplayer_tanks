@@ -11,7 +11,7 @@ class GameServer
     }
     addTank(id,username,kills,x,y,hp,direction)
     {
-        var tank = {id,username,kills,x,y,hp,direction};
+        var tank = {id,username,kills,x,y,hp,direction,lastBulletHit: null};
         this.currentTanks.push(tank);
     }
     addBullet(userId,gameId,x,y,isFacing,containerHeight,containerWidth)
@@ -27,9 +27,10 @@ class GameServer
            return t.id !== tankId;
         });
     }
-    hurtTank(tank)
+    damageTank(tank,bulletId)
     {
         tank.hp -= 10;
+        tank.lastBulletHit = bulletId;
     }
     getGameId()
     {
@@ -68,6 +69,7 @@ class GameServer
 
         this.bullets.forEach(function(bullet)
         {
+            game.intersects(bullet);
             if(bullet.x < -5 || bullet.x > bullet.getCanvas().width ||bullet.y < -5 || bullet.y > bullet.getCanvas().height)
             {
                 bullet.setRemove(true);
@@ -78,12 +80,28 @@ class GameServer
             }
         });
     }
+    intersects(bullet)
+    {
+        var game = this;
+
+        this.currentTanks.forEach(function(tank)
+        {
+           if(tank.id !== bullet.getUserId())
+           {
+               if(bullet.intersects(tank))
+               {
+                   game.damageTank(tank,bullet.getUserId());
+                   bullet.setRemove(true);
+               }
+           }
+        });
+    }
     removeDeadTanks()
     {
         this.currentTanks = this.currentTanks.filter(function(tank)
-        {
-           return tank.hp > 0;
-        });
+    {
+        return tank.hp > 0;
+    });
     }
     removeBullets()
     {

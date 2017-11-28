@@ -24,8 +24,10 @@ app.factory('socket', function ($rootScope) {
     };
 });
 
-app.controller("gameController",function($scope,socket)
+app.controller("gameController",function($scope,$http,socket)
 {
+
+    //TODO add in a way for the tank to either respawn or kick them out when they die
 
     socket.on("connect",function()
     {
@@ -43,11 +45,33 @@ app.controller("gameController",function($scope,socket)
     socket.on("sync",(tanks)=>
     {
        $scope.game.updateServerTanks(tanks);
+       if($scope.game.getLocalTankHp() > 0)
+       {
+           $scope.localHealth = $scope.game.getLocalTankHp();
+       }
+       else
+       {
+           $scope.localHealth = "Destroyed!";
+       }
+
+    });
+    socket.on("updateScores",function(userInfo)
+    {
+        console.log("post the new score!");
+       $http.post("/private/updatescore",{kills:userInfo.kills,username:userInfo.username}).then(function(response)
+       {
+           console.log("successful upload of score");
+       },function(error)
+       {
+           console.log("error uploading score");
+       });
+
     });
 
     $(document).ready(function()
     {
         $scope.game = new Game(document.getElementById("game"),socket);
+        $scope.localHealth = 100;
 
        /* if(performance.navigation.type === 1)
         {
