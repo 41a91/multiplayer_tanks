@@ -11,6 +11,8 @@ class Game
 
         this.tankWidth = 10;
         this.tankHeight = 10;
+        this.bulletWidth = 5;
+        this.bulletHeight = 5;
 
         var t = this;
         setInterval(function()
@@ -36,6 +38,11 @@ class Game
             this.tanks.push(tank);
         }
 
+    }
+    addBullet(bulletId,userId,gameId,x,y)
+    {
+        var bullet = new Bullet(bulletId,userId,gameId,x,y,this.bulletWidth,this.bulletHeight,this.canvas);
+        this.bullets.push(bullet);
     }
     removeTank(userId)
     {
@@ -71,6 +78,8 @@ class Game
                 this.bullets[i].percDraw(this.graphics);
             }
             this.socket.emit("sync",this.sendLocalTank());
+        this.removeBullets();
+        //this.removeDeadTanks();
 
     }
     sendLocalTank()
@@ -126,13 +135,42 @@ class Game
 
         });
 
+        info.bullets.forEach(function(bullet)
+        {
+           var bulletExists = false;
+           console.log("the bullet in the client game: " + bullet.bulletId);
+           game.bullets.forEach(function(clientBullet)
+           {
+              if(bullet.bulletId === clientBullet.getBulletId())
+              {
+                  clientBullet.setX(bullet.x);
+                  clientBullet.setY(bullet.y);
+                  clientBullet.setRemove(bullet.remove);
+                  console.log("the bullets life span: " + bullet.remove);
+                  bulletExists = true;
+              }
+           });
+           if(!bulletExists)
+           {
+            game.addBullet(bullet.bulletId,bullet.userId,bullet.gameId,bullet.x,bullet.y);
+           }
+        });
+
     }
-
-
-
-
-
-
+    removeBullets()
+    {
+        this.bullets = this.bullets.filter(function(bullet)
+        {
+            return !bullet.getRemove();
+        });
+    }
+    removeDeadTanks()
+    {
+        this.tanks = this.tanks.filter(function(tank)
+        {
+            return tank.hp > 0;
+        });
+    }
 
 
 }

@@ -108,19 +108,21 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
            gameServers.accessServer(tank.gameId).getTank(tank.userId).y = tank.y;
            gameServers.accessServer(tank.gameId).getTank(tank.userId).direction = tank.direction;
 
-           gameServers.accessServer(tank.gameId).syncBullets();
-
-           socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
-           socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId});
+            socket.emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
+            socket.broadcast.to(tank.gameId).emit("sync",{tanks:gameServers.accessServer(tank.gameId).getTanks(),gameId:tank.gameId,bullets:gameServers.accessServer(tank.gameId).getBullets()});
 
            gameServers.accessServer(tank.gameId).removeBullets();
+           gameServers.accessServer(tank.gameId).syncBullets();
+
+
+
            //gameServers.accessServer(tank.gameId).removeDeadTanks();
 
         });
         socket.on("fireBullet",(bullet)=>
         {
             //TODO the container is an empty object and the bullets are not placed on the screen in a percentage based way
-            gameServers.accessServer(bullet.gameId).addBullet(bullet.userId,bullet.gameId,bullet.x,bullet.y,bullet.isFacing,bullet.container);
+            gameServers.accessServer(bullet.gameId).addBullet(bullet.userId,bullet.gameId,bullet.x,bullet.y,bullet.isFacing,bullet.containerHeight,bullet.containerWidth);
             console.log("bullets: " ,gameServers.accessServer(bullet.gameId).getBullets());
         });
     });

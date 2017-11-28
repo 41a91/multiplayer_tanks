@@ -306,27 +306,28 @@ class Tank
     shoot()
     {
         console.log("POW!");
-        var deltaX = this.getCenterX();
-        var deltaY = this.getCenterY();
+        var deltaX = this.x;
+        var deltaY = this.y;
 
         if(this.isFacing === "up")
         {
-            deltaY -= 5;
+            deltaY -= 3;
         }
         if(this.isFacing === "down")
         {
-            deltaY += 5;
+            deltaY += 7;
         }
         if(this.isFacing === "right")
         {
-            deltaX += 5;
+            deltaX += 7;
         }
         if(this.isFacing === "left")
         {
-            deltaX -= 5;
+            deltaX -= 3;
         }
+        console.log("The container of the bullet: " + this.container.width);
 
-        var bullet = {userId:this.userId,gameId:this.gameId,x:deltaX,y:deltaY,isFacing:this.isFacing,container:this.container};
+        var bullet = {userId:this.userId,gameId:this.gameId,x:deltaX,y:deltaY,isFacing:this.isFacing,containerHeight:this.container.height,containerWidth:this.container.width};
             //new Bullet(this.userId,this.gameId,deltaX,deltaY,5,5,this.container);
 
         this.socket.emit("fireBullet",bullet);

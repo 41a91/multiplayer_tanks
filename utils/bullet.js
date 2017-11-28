@@ -1,12 +1,14 @@
 class Bullet
 {
-    constructor(userId,gameId,x,y,isFacing,container)
+    constructor(bulletId,userId,gameId,x,y,isFacing,containerHeight,containerWidth)
     {
+        this.bulletId = bulletId;
         this.userId = userId;
         this.gameId = gameId;
         this.x = x;
         this.y = y;
-        this.container = container;
+        this.containerHeight = containerHeight;
+        this.containerWidth = containerWidth;
         this.speed = 4;
         this.direction = isFacing;
         this.remove = false;
@@ -17,7 +19,11 @@ class Bullet
     }
     getCanvas()
     {
-        return this.container;
+        return {height: this.containerHeight, width: this.containerWidth};
+    }
+    getBulletId()
+    {
+        return this.bulletId;
     }
     controlBullet()
     {
@@ -41,6 +47,10 @@ class Bullet
     getRemove()
     {
         return this.remove;
+    }
+    getBulletInfo()
+    {
+        return {bulletId: this.bulletId,userId: this.userId,gameId: this.gameId,x: this.x,y: this.y,remove: this.remove};
     }
 }
 module.exports = {Bullet};

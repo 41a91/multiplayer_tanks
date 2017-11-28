@@ -1,8 +1,9 @@
 class Bullet
 {
 
-    constructor(userId, gameId,x,y,width,height,container)
+    constructor(bulletId,userId, gameId,x,y,width,height,container)
     {
+        this.bulletId = bulletId;
         this.userId = userId;
         this.gameId = gameId;
         this.x = x;
@@ -10,6 +11,7 @@ class Bullet
         this.width = width;
         this.height = height;
         this.container = container;
+        console.log("bullets container: " ,container);
         this.percX = Math.round(x/100*this.container.width);
         this.percY = Math.round(y/100*this.container.height);
         this.percW = Math.round(width/100*this.container.width);
@@ -62,6 +64,10 @@ class Bullet
     getGameId()
     {
         return this.gameId;
+    }
+    getBulletId()
+    {
+        return this.bulletId;
     }
     setX(x)
     {

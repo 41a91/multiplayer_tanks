@@ -7,15 +7,17 @@ class GameServer
         this.currentTanks = [];
         this.bullets = [];
         this.id = id;
+        this.currentBullet = 0;
     }
     addTank(id,username,kills,x,y,hp,direction)
     {
         var tank = {id,username,kills,x,y,hp,direction};
         this.currentTanks.push(tank);
     }
-    addBullet(userId,gameId,x,y,isFacing,container)
+    addBullet(userId,gameId,x,y,isFacing,containerHeight,containerWidth)
     {
-        var bullet = new Bullet(userId,gameId,x,y,isFacing,container);
+        this.currentBullet++;
+        var bullet = new Bullet(this.currentBullet,userId,gameId,x,y,isFacing,containerHeight,containerWidth);
         this.bullets.push(bullet);
     }
     removeTank(tankId)
@@ -39,7 +41,12 @@ class GameServer
     }
     getBullets()
     {
-        return this.bullets;
+        var bullets = [];
+        this.bullets.forEach(function(bullet)
+        {
+           bullets.push(bullet.getBulletInfo());
+        });
+        return bullets;
     }
     getBullet(id)
     {
@@ -61,7 +68,7 @@ class GameServer
 
         this.bullets.forEach(function(bullet)
         {
-            if(bullet.x < 0 || bullet.x > bullet.getCanvas().width ||bullet.y < 0 || bullet.y > bullet.getCanvas().height)
+            if(bullet.x < -5 || bullet.x > bullet.getCanvas().width ||bullet.y < -5 || bullet.y > bullet.getCanvas().height)
             {
                 bullet.setRemove(true);
             }
