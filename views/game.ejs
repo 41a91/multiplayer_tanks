@@ -13,6 +13,11 @@
 
 <% include includes/game_main.ejs %>
 
+<div id="overlay">
+    <div id="overlayText">You have been destroyed!</div>
+    <button type="button" class="btn btn-primary" id="overlayButton">Respawn</button>
+</div>
+
 
 <script src="../socket.io/socket.io.js" type="text/javascript"></script>
 <script src="../js/game_client.js" type="text/javascript"></script>

@@ -341,7 +341,6 @@ class Tank
         {
             deltaX -= 5;
         }
-        console.log("The container of the bullet: " + this.container.width);
 
         var bullet = {userId:this.userId,gameId:this.gameId,x:deltaX,y:deltaY,isFacing:this.isFacing,containerHeight:this.container.height,containerWidth:this.container.width};
             //new Bullet(this.userId,this.gameId,deltaX,deltaY,5,5,this.container);

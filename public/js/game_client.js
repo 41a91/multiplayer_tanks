@@ -51,6 +51,8 @@ app.controller("gameController",function($scope,$http,socket)
        }
        else
        {
+           //TODO fix the respawn stuff
+          // $("#overlay").css("display","block");
            $scope.localHealth = "Destroyed!";
        }
 
@@ -72,6 +74,15 @@ app.controller("gameController",function($scope,$http,socket)
     {
         $scope.game = new Game(document.getElementById("game"),socket);
         $scope.localHealth = 100;
+        var overlay = $("#overlay");
+
+        $("#overlayButton").click(function()
+        {
+           $scope.game.localTank.setHp(100);
+           $scope.game.localTank.setDead(false);
+           $scope.localHealth = 100;
+           overlay.css("display","none");
+        });
 
        /* if(performance.navigation.type === 1)
         {

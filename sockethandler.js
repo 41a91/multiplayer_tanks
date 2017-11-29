@@ -23,6 +23,7 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
            io.to("chat").emit("updateUserList",users.getUserList());
             socket.emit("newMessage",generateMessage("Admin","Welcome to the chat room: " + params.username));
             socket.broadcast.to("chat").emit("newMessage",generateMessage("Admin",params.username + " has joined the chat room!"));
+            socket.emit("grabScore");
             callback();
         });
 
@@ -126,7 +127,6 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
         {
             var username = gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).username;
             gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills += 1;
-            console.log( gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills);
             socket.emit("updateScores",{kills:gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills,username:username});
         });
     });

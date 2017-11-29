@@ -30,9 +30,8 @@ function updateScroll()
         chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-app.controller("chatController",function($scope,socket)
+app.controller("chatController",function($scope,$http,socket)
 {
-    //TODO add in a way for the kills to be updated see routes /private/amountofkills
 
     $scope.users = [];
     $scope.messages = [];
@@ -56,13 +55,23 @@ app.controller("chatController",function($scope,socket)
     socket.on("updateUserList",function(users)
     {
         $scope.users = users;
-        console.log("new user: ", users);
     });
     socket.on("newMessage",function(message)
     {
         $scope.messages.push(message);
         updateScroll();
 
+    });
+    socket.on("grabScore",function()
+    {
+        $http.post("/private/amountofkills",{username:$("#username").html()}).then(function(response)
+        {
+            $("#kills").html(response.data);
+
+        },function(error)
+        {
+            console.log("error uploading score");
+        });
     });
     $("#send").click(function()
     {

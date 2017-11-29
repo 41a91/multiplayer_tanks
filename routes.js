@@ -205,7 +205,7 @@ app.all("*",checkLoggedIn);
                if (result[0]) {
                    var profile = result[0];
 
-                   res.send(profile.profile_kills);
+                   res.send(profile.profile_kills+"");
 
                }
            }
