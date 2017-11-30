@@ -24,6 +24,9 @@ class Tank
         this.isFacing = "right";
         this.socket = null;
         this.lastBulletHit = null;
+        this.canShoot = true;
+        this.ammo = 3;
+        this.localTime = 0;
         this.rightImg = document.getElementById("rightTank");
         this.leftImg = document.getElementById("leftTank");
         this.upImg = document.getElementById("upTank");
@@ -221,6 +224,14 @@ class Tank
     {
         return this.spdY;
     }
+    getCurrentAmmo()
+    {
+        return this.ammo;
+    }
+    getLocalTime()
+    {
+        return this.localTime;
+    }
     contains(x,y)
     {
         return x >= this.x && x <= this.x+this.width && y >= this.y && y <= this.y+this.height;
@@ -250,6 +261,18 @@ class Tank
         if(this.percH < 1)
         {
             this.percH = 1;
+        }
+    }
+    controlAmmo(gameTime)
+    {
+        if(this.ammo === 0)
+        {
+            this.localTime += gameTime;
+            if(this.localTime >= 84)
+            {
+                this.ammo = 3;
+                this.localTime = 0;
+            }
         }
     }
     draw(graphics)
@@ -294,9 +317,11 @@ class Tank
                    tank.isFacing = "left";
                    break;
                case 32:
-                   if(!tank.dead)
+                   if(!tank.dead && tank.canShoot && tank.ammo > 0)
                    {
-                       tank.shoot();
+                           tank.canShoot = false;
+                           tank.shoot();
+                           tank.ammo--;
                    }
                    break;
            }
@@ -315,6 +340,9 @@ class Tank
                    break;
                case 65:
                    tank.dir.left = false;
+                   break;
+               case 32:
+                   tank.canShoot = true;
                    break;
            }
         });

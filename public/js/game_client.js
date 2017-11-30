@@ -1,5 +1,5 @@
 var app = angular.module("gameApp",[]);
-
+var currentImg = 3;
 app.factory('socket', function ($rootScope) {
     var socket = io.connect();
     return {
@@ -27,8 +27,6 @@ app.factory('socket', function ($rootScope) {
 app.controller("gameController",function($scope,$http,socket)
 {
 
-    //TODO add in a way for the tank to either respawn or kick them out when they die
-
     socket.on("connect",function()
     {
         socket.emit("preparedGame",{username:$("#username").html()});
@@ -48,11 +46,11 @@ app.controller("gameController",function($scope,$http,socket)
        if($scope.game.getLocalTankHp() > 0)
        {
            $scope.localHealth = $scope.game.getLocalTankHp();
+           controlAmmoVisuals($scope.game);
        }
        else
        {
-           //TODO fix the respawn stuff
-          // $("#overlay").css("display","block");
+           $("#overlay").css("display","block");
            $scope.localHealth = "Destroyed!";
        }
 
@@ -60,14 +58,19 @@ app.controller("gameController",function($scope,$http,socket)
     socket.on("updateScores",function(userInfo)
     {
         console.log("post the new score!");
-       $http.post("/private/updatescore",{kills:userInfo.kills,username:userInfo.username}).then(function(response)
-       {
-           console.log("successful upload of score");
-       },function(error)
-       {
-           console.log("error uploading score");
-       });
-
+        if(userInfo)
+        {
+            $http.post("/private/updatescore",{kills:userInfo.kills,username:userInfo.username}).then(function(response)
+            {
+                console.log("successful upload of score");
+            },function(error)
+            {
+                console.log("error uploading score");
+            });
+        }else
+        {
+            console.log("both players died at same time!");
+        }
     });
 
     $(document).ready(function()
@@ -78,10 +81,14 @@ app.controller("gameController",function($scope,$http,socket)
 
         $("#overlayButton").click(function()
         {
-           $scope.game.localTank.setHp(100);
-           $scope.game.localTank.setDead(false);
-           $scope.localHealth = 100;
+           $scope.game.localTank = null;
+           //$scope.game.localTank.setDead(false);
+           //$scope.localHealth = 100;
+            socket.emit("respawnTank");
            overlay.css("display","none");
+            $("#currentAmmo").css("display","block");
+            $("#reloadBar").css("display","none");
+            $("#currentAmmo").attr("src","../images/Three_Bullets.png");
         });
 
        /* if(performance.navigation.type === 1)
@@ -100,3 +107,46 @@ app.controller("gameController",function($scope,$http,socket)
         });
     });
 });
+
+function controlAmmoVisuals(game)
+{
+    var currentAmmo = game.localTank.getCurrentAmmo();
+
+
+    var ammoImage = $("#currentAmmo");
+    var reloadBar = $("#reloadBar");
+
+if(currentAmmo === 3 && currentImg === 3)
+{
+    ammoImage.attr("src","../images/Three_Bullets.png");
+    currentImg--;
+}
+else if(currentAmmo === 2 && currentImg === 2)
+{
+    ammoImage.attr("src","../images/Two_Bullets.png");
+    reloadBar.css("width",game.localTank.getLocalTime() + "%");
+    currentImg--;
+}
+else if(currentAmmo === 1 && currentImg === 1)
+{
+    ammoImage.attr("src","../images/Bullet.png");
+    currentImg--;
+}
+else if(currentAmmo === 0)
+{
+    if(currentImg === 0)
+    {
+        ammoImage.css("display","none");
+        reloadBar.css("display","block");
+        currentImg = -1;
+    }
+
+    reloadBar.css("width",game.localTank.getLocalTime() + "%");
+    if(game.localTank.getLocalTime() >= 83)
+    {
+        reloadBar.css("display","none");
+        ammoImage.css("display","block");
+        currentImg = 3;
+    }
+}
+}

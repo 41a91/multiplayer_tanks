@@ -102,7 +102,6 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
         });
         socket.on("sync",(tank)=>
         {
-            //TODO when i leave the game it still think the tank is in the array when its not
             if(gameServers.accessServer(tank.gameId).getTank(tank.userId))
             {
                 gameServers.accessServer(tank.gameId).getTank(tank.userId).x = tank.x;
@@ -125,9 +124,26 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
         });
         socket.on("updateScores",(userInfo)=>
         {
-            var username = gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).username;
-            gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills += 1;
-            socket.emit("updateScores",{kills:gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills,username:username});
+            var user = gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy);
+            if(user)
+            {
+                gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills += 1;
+                socket.emit("updateScores",{kills:gameServers.accessServer(userInfo.gameId).getTank(userInfo.killedBy).kills,username:user.username});
+            }
+        });
+        socket.on("respawnTank",()=>
+        {
+            var user = inGameUsers.getUser(socket.id);
+
+            if(user)
+            {
+                var initX = randomNumber(5,80);
+                var initY = randomNumber(5,100);
+                gameServers.accessServer(user.gameId).addTank(user.id,user.username,0,initX,initY,100,"right");
+                socket.emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:true,gameId: user.gameId});
+                socket.broadcast.to(user.gameId).emit("updateTanks",{userId: user.id,username: user.username, x: initX, y:initY, hp:100,isLocal:false, gameId: user.gameId});
+            }
+
         });
     });
 

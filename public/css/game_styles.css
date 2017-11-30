@@ -31,7 +31,7 @@ a
 {
     font-size: 2em;
 }
-img
+.hide
 {
     display: none;
 }
@@ -69,4 +69,15 @@ img
     left: 50%;
     font-size: 2em;
     transform: translate(-50%,-50%);
+}
+#ammoSlot
+{
+    width: 100%;
+}
+#reloadBar
+{
+    display: none;
+    width: 1%;
+    background-color: red;
+    color: gainsboro;
 }

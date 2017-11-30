@@ -19,6 +19,7 @@ class Game
         {
             t.graphics.clearRect(0,0,t.canvas.width,t.canvas.height);
             t.gameLoop();
+            t.localTank.controlAmmo(1);
         },60);
 
 
@@ -177,6 +178,10 @@ class Game
         deadTanks.forEach(function(tank)
         {
             game.socket.emit("updateScores",{killedBy:tank.getLastBulletHit(),gameId:tank.getGameId()});
+            if(tank.getUserId() === game.localTank.getUserId())
+            {
+                game.tanks = [];
+            }
         });
         this.tanks = this.tanks.filter(function(tank)
         {
@@ -187,6 +192,4 @@ class Game
     {
         return this.localTank.getHp();
     }
-
-
 }
