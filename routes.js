@@ -6,15 +6,12 @@ function createRoutes(app,publicPath,mysession)
 
     var connection = mysql.createConnection({
 
-        host     : 'localhost',
-        user     : 'root',
-        password : 'dennisiscool',
-        database : 'tank_profiles'
+        host     : process.env.DBHOST,
+        user     : process.env.DBUSER,
+        password : process.env.DBPASSWORD,
+        database : process.env.TANKDB
 
     });
-
-
-
 
 var checkLoggedIn = function(req,res,next)
 {
@@ -85,11 +82,10 @@ app.all("*",checkLoggedIn);
         var username = req.body.username;
         var password = req.body.password;
 
-       /* connection.query("Select * from profile where profile_username = ?",[username],function(err,result,fields)
+       connection.query("Select * from profile where profile_username = ?",[username],function(err,result,fields)
         {
-            console.log(result);
-           if(result === undefined)
-           {*/
+           if(result.length === 0)
+           {
                bcrypt.genSalt(10,function(err,salt)
                {
                    bcrypt.hash(password,salt,function(err,hash)
@@ -107,12 +103,12 @@ app.all("*",checkLoggedIn);
                        });
                    });
                });
-           /*}
+           }
            else
            {
                res.render("register",{error:"That user already exists"});
            }
-        });*/
+        });
 
 
     });

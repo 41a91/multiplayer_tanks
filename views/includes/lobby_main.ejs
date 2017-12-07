@@ -10,8 +10,8 @@
                 </ul>
             </div>
         </div>
-        <div class="col-xs-6 row1col2">
-            <ul class="chatText">
+        <div class="col-xs-6 row1col2" id="scrollingChat">
+            <ul class="chatText" >
                 <li class="message" data-ng-repeat="message in messages">
                     <div class="messageSender"><strong>{{message.username}}</strong>: {{message.message}}</div>
                 </li>

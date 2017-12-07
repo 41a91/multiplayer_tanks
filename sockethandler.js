@@ -41,14 +41,13 @@ function handleSocketEvents(io,users,app,gameServers,inGameUsers)
 
         socket.on("disconnect",()=>
         {
-            console.log(socket.username + " was disconnected");
 
             var user = users.removeUser(socket.id);
 
             if(user)
             {
                 io.to("chat").emit("updateUserList",users.getUserList());
-                io.to("chat").emit("newMessage",generateMessage("admin","The user " + user.username + " has disconnected"));
+                io.to("chat").emit("newMessage",generateMessage("Admin","The user " + user.username + " has disconnected"));
             }
         });
 

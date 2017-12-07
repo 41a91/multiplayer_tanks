@@ -349,7 +349,6 @@ class Tank
     }
     shoot()
     {
-        console.log("POW!");
         var deltaX = this.x + 4;
         var deltaY = this.y + 4;
 

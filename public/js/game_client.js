@@ -33,7 +33,6 @@ app.controller("gameController",function($scope,$http,socket)
     });
     socket.on("updateTanks",(tank)=>
     {
-        console.log("We got the tank ",tank);
         $scope.game.addTank(tank.userId,tank.gameId,tank.username,tank.isLocal,tank.x,tank.y,tank.hp);
     });
     socket.on("removeTank",(tank)=>
@@ -53,7 +52,6 @@ app.controller("gameController",function($scope,$http,socket)
            $("#overlay").css("display","block");
            $scope.localHealth = "Destroyed!";
        }
-
     });
     socket.on("updateScores",function(userInfo)
     {

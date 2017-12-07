@@ -18,7 +18,7 @@ textarea
 {
     min-height: 197px;
     max-height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .row2col2
 {

@@ -26,8 +26,8 @@ app.factory('socket', function ($rootScope) {
 
 function updateScroll()
 {
-    var chatBox = $(".messageSender");
-        chatBox.scrollTop = chatBox.scrollHeight;
+    var chatBoxHeight = document.getElementById("scrollingChat").scrollHeight;
+    $("#scrollingChat").scrollTop(chatBoxHeight);
 }
 
 app.controller("chatController",function($scope,$http,socket)

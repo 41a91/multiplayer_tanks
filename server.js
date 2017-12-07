@@ -17,7 +17,7 @@ var inGameUsers = new InGameUsers();
 var gameServers = new GameServers();
 
 
-var port = process.env.PORT || 8080;
+var port = 9898;
 
 var app = express();
 var server = http.Server(app);
